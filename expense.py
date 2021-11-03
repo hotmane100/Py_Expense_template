@@ -1,6 +1,9 @@
 from PyInquirer import prompt
 import csv
 
+
+lst = []
+
 expense_questions = [
     {
         "type":"input",
@@ -13,10 +16,11 @@ expense_questions = [
         "message":"New Expense - Label: ",
     },
     {
-        "type":"input",
+        "type":"list",
         "name":"spender",
         "message":"New Expense - Spender: ",
-    },
+        "choices": lst
+    }
 
 ]
 
@@ -34,6 +38,9 @@ def fill_file(infos):
         writer.writerow(infos)
 
 def new_expense(*args):
+    f = open('users.csv', 'r').readlines()
+    for elt in f:
+        lst.append(elt.strip())
     infos = prompt(expense_questions)
     # Writing the informations on external file might be a good idea ¯\_(ツ)_/¯
     fill_file(infos)
