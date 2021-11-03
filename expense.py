@@ -1,8 +1,8 @@
 from PyInquirer import prompt
 import csv
 
-
 lst = []
+lst2 = []
 
 expense_questions = [
     {
@@ -20,8 +20,15 @@ expense_questions = [
         "name":"spender",
         "message":"New Expense - Spender: ",
         "choices": lst
+    },
+    {
+        'type': 'checkbox',
+        'name': 'involved',
+        'message': 'People involved in the expense',
+        'choices': lst2,
+        'validate': lambda answer: 'You must choose at least one person.' \
+            if len(answer) == 0 else True
     }
-
 ]
 
 def fill_file(infos):
@@ -30,10 +37,9 @@ def fill_file(infos):
     while(f.readline()):
         nb_lines += 1
     with open('expense_report.csv', 'a+', newline='') as csvfile:
-        fieldnames = ['amount', 'label', 'spender']
+        fieldnames = ['amount', 'label', 'spender', 'involved']
         writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
         if (nb_lines == 0) :
-            print("pass here")
             writer.writeheader()
         writer.writerow(infos)
 
@@ -41,7 +47,9 @@ def new_expense(*args):
     f = open('users.csv', 'r').readlines()
     for elt in f:
         lst.append(elt.strip())
+        lst2.append({'name': elt.strip(), 'checked': True})
     infos = prompt(expense_questions)
+    print(infos)
     # Writing the informations on external file might be a good idea ¯\_(ツ)_/¯
     fill_file(infos)
     #adding infos to expense file
